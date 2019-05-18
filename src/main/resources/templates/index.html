@@ -6,19 +6,49 @@
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>PYDEPLOY</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css">
+    <style>
+        #code {
+            height: calc(100vh - 100px);
+            overflow-y: auto;
+        }
+    </style>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
 </head>
 <body>
-index
-<div id="box"></div>
+<br>
+<br>
+<br>
+<div class="container">
+    <h1>
+        Hello World
+    </h1>
+    <button class="btn btn-primary" onclick="executeCommand()">ping baidu.com</button>
+    <pre style="margin-top: 10px;">
+        <code id="code"></code>
+    </pre>
+</div>
 
 <script>
-    $(function () {
-        console.log(11);
-        $.get('/test', function (data) {
-            console.log(data);
-        })
-    })
+    var socket = io.connect('http://localhost:9000?username=test');
+    // socket.on('connect', function () {});
+    // socket.on('disconnect', function () {});
+
+    socket.on('log', function (data) {
+        $("#code").append(data + "</br>");
+        keeyScrollBottom();
+    });
+
+    function keeyScrollBottom() {
+        var objDiv = document.getElementById("code");
+        objDiv.scrollTop = objDiv.scrollHeight;
+    }
+
+    function executeCommand() {
+        socket.emit('test', {type: 'hello', payload: {name: 'world'}});
+    }
 </script>
 </body>
 </html>
