@@ -1,0 +1,15 @@
+== PYDEPLOY
+
+可执行shell脚本的web程序
+
+== 数据库
+
+数据库用的h2, 文件在项目根目录下的 db 目录下, 可修改配置文件开启编辑数据库功能, 也可以通过客户端软件编辑
+
+== 启动
+
+clone代码, 使用maven安装好依赖, 运行 mvn spring-boot:run 启动
+
+== 部署
+
+clone代码, 使用maven安装好依赖, 运行 `mvn clean compile package` 打包, 然后运行 `java -jar pydeploy.jar` 启动服务
