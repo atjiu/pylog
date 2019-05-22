@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>PYDEPLOY</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css">
+    <style>
+        #code {
+            height: calc(100vh - 100px);
+            overflow-y: auto;
+        }
+    </style>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
+</head>
+<body>
+<br>
+<br>
+<br>
+<div class="container">
+    <h1>
+        Hello World
+    </h1>
+    <button class="btn btn-primary" onclick="executeCommand()">ping baidu.com</button>
+    <pre style="margin-top: 10px;">
+        <code id="code"></code>
+    </pre>
+</div>
+
+<script>
+
+    if (window.WebSocket) {
+        // Create WebSocket connection.
+        const socket = new WebSocket('ws://localhost:8080/websocket');
+
+        // Connection opened
+        socket.addEventListener('open', function (event) {
+            socket.send(JSON.stringify({type: 'text', payload: {data: 'Hello Server!'}}));
+        });
+
+        // Connection closed
+        socket.addEventListener('close', function (event) {
+            console.log(event, 'connect closed!');
+            socket.send(JSON.stringify({type: 'text', payload: {data: 'i am leave!'}}));
+        });
+
+        // Listen for messages
+        socket.addEventListener('message', function (event) {
+            var data = JSON.parse(event.data);
+            if (data.type === 'pong') {
+                renderPongMessage(data.payload);
+            }
+        });
+
+        function executeCommand() {
+            emit('ping', {});
+        }
+
+        function keepScrollBottom() {
+            var objDiv = document.getElementById("code");
+            objDiv.scrollTop = objDiv.scrollHeight;
+        }
+
+        // 封装 emit 方法
+        function emit(type, obj) {
+            socket.send(JSON.stringify({type: type, payload: obj}));
+        }
+
+        function renderPongMessage(text) {
+            $("#code").append(text + '<br>');
+        }
+    }
+
+</script>
+</body>
+</html>
