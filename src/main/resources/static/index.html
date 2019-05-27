@@ -51,10 +51,24 @@
         // Listen for messages
         socket.addEventListener('message', function (event) {
             var data = JSON.parse(event.data);
-            if (data.type === 'pong') {
-                renderPongMessage(data.payload);
+            switch (data.type) {
+                case 'text':
+                    console.log(data.payload);
+                    break;
+                case 'pong':
+                    renderPongMessage(data.payload);
+                    break;
             }
         });
+
+        // 封装 emit 方法
+        function emit(type, obj) {
+            socket.send(JSON.stringify({type: type, payload: obj}));
+        }
+
+        // setTimeout(function () {
+        //     socket.send(JSON.stringify({type: 'test', payload: {}}));
+        // }, 500);
 
         function executeCommand() {
             emit('ping', {});
@@ -63,11 +77,6 @@
         function keepScrollBottom() {
             var objDiv = document.getElementById("code");
             objDiv.scrollTop = objDiv.scrollHeight;
-        }
-
-        // 封装 emit 方法
-        function emit(type, obj) {
-            socket.send(JSON.stringify({type: type, payload: obj}));
         }
 
         function renderPongMessage(text) {

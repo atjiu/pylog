@@ -1,6 +1,5 @@
 package co.yiiu.pydeploy.config;
 
-import co.yiiu.pydeploy.handler.PingHandler;
 import co.yiiu.pydeploy.util.Message;
 import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
@@ -26,12 +25,16 @@ public class MyWebSocket {
     /**
      * 所有的对象
      */
-    public static List<MyWebSocket> webSockets = new CopyOnWriteArrayList<MyWebSocket>();
+    public static List<MyWebSocket> webSockets = new CopyOnWriteArrayList<>();
 
     /**
      * 会话
      */
     private Session session;
+
+    public Session getSession() {
+        return session;
+    }
 
     /**
      * 建立连接
@@ -42,10 +45,15 @@ public class MyWebSocket {
     public void onOpen(Session session) {
         onlineNumber++;
         webSockets.add(this);
-
         this.session = session;
-
-        System.out.println("有新连接加入！ 当前在线人数" + onlineNumber);
+        String msg = "有新连接加入！ 当前在线人数" + onlineNumber;
+//        webSockets.forEach(self -> {
+//            try {
+//                self.session.getBasicRemote().sendText(JSON.toJSONString(new Message("text", msg)));
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        });
     }
 
     /**
@@ -54,8 +62,15 @@ public class MyWebSocket {
     @OnClose
     public void onClose() {
         onlineNumber--;
+        String msg = "有连接关闭！ 当前在线人数" + onlineNumber;
         webSockets.remove(this);
-        System.out.println("有连接关闭！ 当前在线人数" + onlineNumber);
+//        webSockets.forEach(self -> {
+//            try {
+//                self.session.getBasicRemote().sendText(JSON.toJSONString(new Message("text", msg)));
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        });
     }
 
     /**
@@ -65,12 +80,16 @@ public class MyWebSocket {
      * @param session 会话
      */
     @OnMessage
-    public void onMessage(String text, Session session) {
-        Message message = JSON.parseObject(text, Message.class);
-        log.info("来自客户端消息：" + message.toString());
-        switch (message.getType()) {
-            case "ping":
-                new PingHandler(session).sendMessage(message);
-        }
+    public String onMessage(String text, Session session) {
+        System.out.println("client message: " + text);
+//        Message message = JSON.parseObject(text, Message.class);
+//        log.info("来自客户端消息：" + message.toString());
+//        switch (message.getType()) {
+//            case "ping":
+//                new PingHandler(session).sendMessage(message);
+//            case "test":
+//                new TestHandler(session).sendMessage(message);
+//        }
+        return JSON.toJSONString(new Message("text", "hello session: " + session.getId()));
     }
 }
