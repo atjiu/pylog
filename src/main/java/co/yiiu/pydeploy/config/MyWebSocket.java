@@ -1,95 +1,64 @@
 package co.yiiu.pydeploy.config;
 
+import co.yiiu.pydeploy.handler.ChatHandler;
 import co.yiiu.pydeploy.util.Message;
-import com.alibaba.fastjson.JSON;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import javax.websocket.OnClose;
-import javax.websocket.OnMessage;
-import javax.websocket.OnOpen;
-import javax.websocket.Session;
+import javax.websocket.*;
 import javax.websocket.server.ServerEndpoint;
+import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-@ServerEndpoint(value = "/websocket")
+@ServerEndpoint(value = "/websocket", encoders = {MessageEncoder.class}, decoders = {MessageDecoder.class})
 @Component
-@Slf4j
 public class MyWebSocket {
-    /**
-     * 在线人数
-     */
-    public static int onlineNumber = 0;
+  //在线人数
+  private static int online = 0;
+  //所有的对象，用于群发
+  public static List<MyWebSocket> webSockets = new CopyOnWriteArrayList<>();
+  //会话
+  private Session session;
 
-    /**
-     * 所有的对象
-     */
-    public static List<MyWebSocket> webSockets = new CopyOnWriteArrayList<>();
+  public Session getSession() {
+    return session;
+  }
 
-    /**
-     * 会话
-     */
-    private Session session;
+  //建立连接
+  @OnOpen
+  public void onOpen(Session session) {
+    online++;
+    webSockets.add(this);
+    this.session = session;
+    String msg = "有新用户连接！当前在线人数: " + online;
+    webSockets.forEach(self -> {
+      try {
+        self.session.getBasicRemote().sendObject(new Message("text", msg));
+      } catch (EncodeException | IOException e) {
+        e.printStackTrace();
+      }
+    });
+  }
 
-    public Session getSession() {
-        return session;
-    }
+  //连接关闭
+  @OnClose
+  public void onClose() {
+    online--;
+    String msg = "有用户离开，当前在线人数: " + online;
+    webSockets.remove(this);
+    webSockets.forEach(self -> {
+      try {
+        self.session.getBasicRemote().sendObject(new Message("text", msg));
+      } catch (EncodeException | IOException e) {
+        e.printStackTrace();
+      }
+    });
+  }
 
-    /**
-     * 建立连接
-     *
-     * @param session
-     */
-    @OnOpen
-    public void onOpen(Session session) {
-        onlineNumber++;
-        webSockets.add(this);
-        this.session = session;
-        String msg = "有新连接加入！ 当前在线人数" + onlineNumber;
-//        webSockets.forEach(self -> {
-//            try {
-//                self.session.getBasicRemote().sendText(JSON.toJSONString(new Message("text", msg)));
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//        });
-    }
-
-    /**
-     * 连接关闭
-     */
-    @OnClose
-    public void onClose() {
-        onlineNumber--;
-        String msg = "有连接关闭！ 当前在线人数" + onlineNumber;
-        webSockets.remove(this);
-//        webSockets.forEach(self -> {
-//            try {
-//                self.session.getBasicRemote().sendText(JSON.toJSONString(new Message("text", msg)));
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//        });
-    }
-
-    /**
-     * 收到客户端的消息
-     *
-     * @param text    消息
-     * @param session 会话
-     */
-    @OnMessage
-    public String onMessage(String text, Session session) {
-        System.out.println("client message: " + text);
-//        Message message = JSON.parseObject(text, Message.class);
-//        log.info("来自客户端消息：" + message.toString());
-//        switch (message.getType()) {
-//            case "ping":
-//                new PingHandler(session).sendMessage(message);
-//            case "test":
-//                new TestHandler(session).sendMessage(message);
-//        }
-        return JSON.toJSONString(new Message("text", "hello session: " + session.getId()));
-    }
+  //收到客户端的消息
+  @OnMessage
+  public void onMessage(Message text, Session session) {
+    System.out.println("client message: " + text.toString());
+    if (text.getType().equals("chat")) new ChatHandler().sendMessage(text);
+  }
 }
