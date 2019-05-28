@@ -10,11 +10,9 @@
   <link rel="stylesheet" href="/css/app.css">
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js"></script>
 </head>
 <body>
-<br>
 <br>
 <br>
 <div class="container">
@@ -63,7 +61,7 @@
 
   if (window.WebSocket) {
     // Create WebSocket connection.
-    const socket = new WebSocket('ws://localhost:${port}/websocket');
+    const socket = new WebSocket('ws://${host}:${port}/websocket');
 
     // 封装 emit 方法
     function emit(type, obj) {

@@ -15,8 +15,8 @@ a, a:hover, a:visited, a:focus {
   border-top: 0;
 }
 
-.tab-pane p {
-  border-bottom: 1px dashed #bbb;
+.tab-pane div {
+  word-break: break-all;
 }
 
 .nav-tabs {

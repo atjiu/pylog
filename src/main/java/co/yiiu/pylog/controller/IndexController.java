@@ -23,6 +23,7 @@ public class IndexController {
 
   @GetMapping("/")
   public String index(Model model) {
+    model.addAttribute("host", env.getProperty("host"));
     model.addAttribute("port", env.getProperty("server.port"));
     model.addAttribute("name", siteConfig.getName());
     if (siteConfig.getLogs() != null) {

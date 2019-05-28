@@ -14,6 +14,7 @@ import java.util.Map;
 @Data
 public class SiteConfig {
 
+  private String host;
   private String name;
   private Map<String, String> logs;
 }

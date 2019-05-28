@@ -2,6 +2,8 @@
 
 在网页上查看服务器上的日志，使用websocket实现实时传输日志信息
 
+image:/screen.gif[]
+
 == 启动
 
 clone代码, 使用maven安装好依赖, 运行 mvn spring-boot:run 启动
@@ -15,6 +17,8 @@ clone代码, 使用maven安装好依赖, 运行 `mvn clean compile package` 打�
 启动后访问 http://localhost:10870
 
 == 配置
+
+编辑 `application.yml` 文件中 `host`选项，如果是本机部署则不用修改，如果部署在其它机器上要使用ip访问的话，则将`host`修改成部署机器的ip
 
 编辑 `application.yml` 文件，默认配置了nginx的日志文件位置
 
