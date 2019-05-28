@@ -17,7 +17,7 @@
 <br>
 <div class="container">
   <h1>
-  ${name!PYLOG}
+  ${name!"PYLOG"}
   </h1>
   <div>
 
@@ -26,7 +26,7 @@
       <#if names??>
         <#list names as n>
           <li role="presentation" <#if n_index == 0>class="active"</#if>>
-            <a href="#${n!}" role="tab" data-toggle="tab">${n!}</a>
+            <a href="#${n!}" data-id="${n!}" role="tab" data-toggle="tab">${n!}</a>
           </li>
         </#list>
       </#if>
@@ -99,6 +99,10 @@
       var objDiv = document.getElementById(type);
       objDiv.scrollTop = objDiv.scrollHeight;
     }
+
+    $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+      keepScrollBottom(e.target.getAttribute("data-id"));
+    });
 
     setTimeout(function () {
       emit('fetchLogs', {});
