@@ -1,6 +1,40 @@
-.daohang {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 20px;
+body {
+  background-color: #222;
+  color: #60cf41;
+}
+
+a, a:hover, a:visited, a:focus {
+  color: #60cf41;
+}
+
+.tab-pane {
+  height: calc(100vh - 300px);
+  overflow-y: auto;
+  padding: 10px;
+  border: 1px solid #60cf41;
+  border-top: 0;
+}
+
+.tab-pane p {
+  border-bottom: 1px dashed #bbb;
+}
+
+.nav-tabs {
+  border-color: #60cf41;
+}
+
+.tab-pane p:last-child {
+  border-bottom: 0;
+}
+
+.nav-tabs > li.active > a, .nav-tabs > li.active > a:focus, .nav-tabs > li.active > a:hover {
+  color: #60cf41;
+  background-color: #222222;
+  border-color: #60cf41;
+}
+
+.nav-tabs > li > a, .nav-tabs > li > a:focus, .nav-tabs > li > a:hover {
+  color: #60cf41;
+  background-color: #222222;
+  border: 0;
 }

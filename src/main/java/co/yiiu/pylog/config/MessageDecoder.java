@@ -1,6 +1,6 @@
-package co.yiiu.pydeploy.config;
+package co.yiiu.pylog.config;
 
-import co.yiiu.pydeploy.util.Message;
+import co.yiiu.pylog.util.Message;
 import com.alibaba.fastjson.JSON;
 
 import javax.websocket.Decoder;

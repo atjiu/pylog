@@ -1,7 +1,6 @@
-spring:
-  datasource:
-    url: jdbc:h2:file:./db/pydeploy;AUTO_SERVER=TRUE;DB_CLOSE_DELAY=-1
-  jpa:
-    show-sql: true
-    hibernate:
-      ddl-auto: update
+server:
+  port: 10870
+
+name: PYLOG
+logs:
+  nginx: /var/log/nginx/access.log

@@ -1,4 +1,4 @@
-package co.yiiu.pydeploy.config;
+package co.yiiu.pylog.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -1,4 +1,4 @@
-package co.yiiu.pydeploy.util;
+package co.yiiu.pylog.util;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

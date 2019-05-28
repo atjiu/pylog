@@ -1,15 +1,30 @@
-== PYDEPLOY
+== PYLOG
 
-可执行shell脚本的web程序
-
-== 数据库
-
-数据库用的h2, 文件在项目根目录下的 db 目录下, 可修改配置文件开启编辑数据库功能, 也可以通过客户端软件编辑
+在网页上查看服务器上的日志，使用websocket实现实时传输日志信息
 
 == 启动
 
 clone代码, 使用maven安装好依赖, 运行 mvn spring-boot:run 启动
 
+启动后访问 http://localhost:10870
+
 == 部署
 
-clone代码, 使用maven安装好依赖, 运行 `mvn clean compile package` 打包, 然后运行 `java -jar pydeploy.jar` 启动服务
+clone代码, 使用maven安装好依赖, 运行 `mvn clean compile package` 打包, 然后运行 `java -jar pylog.jar` 启动服务
+
+启动后访问 http://localhost:10870
+
+== 配置
+
+编辑 `application.yml` 文件，默认配置了nginx的日志文件位置
+
+比如现在有个服务 `server1`，日志文件在 `/opt/server1.log` 那么配置文件就可以配置成这样
+
+[source,yaml]
+----
+logs:
+  nginx: /var/log/nginx/access.log
+  server1: /opt/server1.log
+----
+
+注意：路径要配置正确

@@ -1,4 +1,4 @@
-package co.yiiu.pydeploy;
+package co.yiiu.pylog;
 
 import org.junit.Test;
 
@@ -8,7 +8,7 @@ import java.io.InputStreamReader;
 
 //@RunWith(SpringRunner.class)
 //@SpringBootTest
-public class PydeployApplicationTests {
+public class PylogApplicationTests {
 
     @Test
     public void contextLoads() throws IOException {
