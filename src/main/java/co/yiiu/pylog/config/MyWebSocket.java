@@ -10,6 +10,8 @@ import javax.websocket.OnMessage;
 import javax.websocket.OnOpen;
 import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -30,6 +32,19 @@ public class MyWebSocket {
     online++;
     webSockets.add(session);
     log.info("有用户打开连接，当前有{}个用户连接", online);
+    // 启动一个时间线程
+    new Thread(() -> {
+      while (true) {
+        try {
+          Thread.sleep(1000);
+          session.getBasicRemote().sendObject(new Message("time", LocalDateTime.now().format(DateTimeFormatter
+              .ofPattern("yyyy-MM-dd HH:mm:ss"))));
+        } catch (Exception e) {
+          log.error(e.getMessage());
+          break;
+        }
+      }
+    }).start();
   }
 
   //连接关闭

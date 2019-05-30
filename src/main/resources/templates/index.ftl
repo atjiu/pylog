@@ -16,9 +16,12 @@
 <br>
 <br>
 <div class="container">
-  <h1>
-  ${name!"PYLOG"}
-  </h1>
+  <div style="display: flex; justify-content: space-between;">
+    <h1>
+    ${name!"PYLOG"}
+    </h1>
+    <div style="align-self: center; color: #fff; font-size: 16px;" id="time"></div>
+  </div>
   <div>
 
     <!-- Nav tabs -->
@@ -84,11 +87,13 @@
       if (message.type === 'fetchLogs') {
         $.each(message.payload, function (name) {
           emit(name, {});
-        })
+        });
+      } else if (message.type === 'time') {
+        $("#time").html(message.payload);
       } else {
         $("#" + message.type).append("<div>" + message.payload + "</div>");
         var line = $("#" + message.type).find('div').length;
-        if (line > 200) {
+        if (line > 2000) {
           $("#" + message.type).find("div:eq(0)").remove();
         }
         keepScrollBottom(message.type);
