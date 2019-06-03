@@ -15,6 +15,9 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @ServerEndpoint(value = "/websocket", encoders = MessageEncoder.class, decoders = MessageDecoder.class)
 @Component
@@ -25,6 +28,8 @@ public class MyWebSocket {
   private static int online = 0;
   //所有的对象，用于群发
   private static List<Session> webSockets = new CopyOnWriteArrayList<>();
+  private static ExecutorService cachedThreadPool = Executors.newCachedThreadPool();
+  private static CountDownLatch countDownLatch;
 
   //建立连接
   @OnOpen
@@ -33,7 +38,7 @@ public class MyWebSocket {
     webSockets.add(session);
     log.info("有用户打开连接，当前有{}个用户连接", online);
     // 启动一个时间线程
-    new Thread(() -> {
+    cachedThreadPool.execute(() -> {
       while (true) {
         try {
           Thread.sleep(1000);
@@ -44,7 +49,7 @@ public class MyWebSocket {
           break;
         }
       }
-    }).start();
+    });
   }
 
   //连接关闭
@@ -60,12 +65,13 @@ public class MyWebSocket {
   public void onMessage(Session session, Message message) {
     try {
       log.info("session.id: {}, message: {}", session.getId(), message);
+      SiteConfig siteConfig = SpringContextUtil.getBean(SiteConfig.class);
+      Map<String, String> logs = siteConfig.getLogs();
       if (message.getType().equals("fetchLogs")) {
-        SiteConfig siteConfig = SpringContextUtil.getBean(SiteConfig.class);
-        Map<String, String> logs = siteConfig.getLogs();
         session.getBasicRemote().sendObject(new Message("fetchLogs", logs));
       } else {
-        new Thread(() -> new LogHandler(session, message).sendMessage()).start();
+        if (countDownLatch == null) countDownLatch = new CountDownLatch(logs.size());
+        cachedThreadPool.execute(new LogHandler(session, message, countDownLatch));
       }
     } catch (Exception e) {
       log.error(e.getMessage());
